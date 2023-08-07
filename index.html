@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>HamCAP Propagation Maps</title>
+    <style type="text/css">
+      body {
+        font: 10px Tahoma, Verdana, sans-serif;
+      }
+      img {
+        border: none;
+        width: 360px;
+        height: 180px;
+      }
+      table.center {
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+        border: hidden;
+        border-collapse: collapse;
+        background-color: #eff7ff;
+      }
+      .main-tbl {
+        background-color: #adbad6;
+      }
+      .main-tbl td,
+      th {
+        border: 0.5px solid;
+        padding: 0px;
+      }
+      .navy {
+        color: navy;
+      }
+      .navy p {
+        font-size: 1.5em;
+      }
+      .small-text {
+        font-size: 1.2em;
+      }
+      .tbl {
+        font: 11px Tahoma, Verdana, sans-serif;
+        text-align: center;
+        border-collapse: collapse;
+      }
+      .tbl .hdr2 {
+        font: 12px;
+        font-weight: bold;
+        color: black;
+        background-color: #adbad6;
+      }
+      .tbl .hdr {
+        font-weight: bold;
+        color: black;
+        background-color: #7b8eb5;
+      }
+      .tbl .hdr .undermouse {
+        color: white;
+        background-color: #008;
+        cursor: pointer;
+      }
+      .tbl .numbers {
+        background-color: #adbad6;
+        cursor: pointer;
+      }
+      .tbl .numbers td {
+        width: 22px;
+      }
+      .tbl .numbers .sel {
+        font-weight: bold;
+        background-color: #7b8eb5;
+      }
+      .tbl .numbers .undermouse {
+        color: white;
+        background-color: #008;
+      }
+      .dotted td {
+        border: 0.5px dotted;
+        border-collapse: collapse;
+      }
+
+      td,
+      th {
+        padding: 4px;
+      }
+    </style>
+
+    <script>
+      /*
+      The original JavaScript and CSS style by Alex VE3NEA, modified & expanded by SM5AJV Ingo. Vy TNX for your efforts!
+      Major code refactoring by Jari OH6BG.
+      */
+      let UTC;
+      const URL = ''; // URL to the map folder. Leave empty if this file is in the same folder with the HamCAP maps
+      const header = ''; // enter '<CALLSIGN>, <LATITUDE> <LONGITUDE>' e.g. '4U1UN, 41N 74W'
+      const dateSSN = ''; // enter '<MONTH> <YEAR>, SSN <nnn>' e.g. 'August 2023, SSN 131'
+
+      function Inc(Oper) {
+        let S = UTC.id.substr(1, 2);
+        let H = document.getElementById(
+          `H${(Oper === 'H' ? ++S : --S + 24) % 24}`,
+        );
+        Clk(H);
+      }
+
+      function Over(Obj) {
+        Obj.className = 'undermouse';
+      }
+
+      function Out(Obj) {
+        Obj.className =
+          Obj.id === 'Inc' ? 'hdr' : Obj === UTC ? 'sel' : 'numbers';
+      }
+
+      function GetText(Obj) {
+        return Obj[
+          document.getElementsByTagName('body')[0].innerText !== undefined
+            ? 'innerText'
+            : 'textContent'
+        ];
+      }
+
+      function SetText(Obj, text) {
+        Obj[
+          document.getElementsByTagName('body')[0].innerText !== undefined
+            ? 'innerText'
+            : 'textContent'
+        ] = text;
+      }
+
+      function ShowMap() {
+        if (!UTC) return;
+        const utc_now = parseInt(GetText(UTC), 10);
+        const utc_nxt = (utc_now + 1) % 24;
+        const utc_prv = (utc_now + 23) % 24;
+        const [now, nxt, prv] = [utc_now, utc_nxt, utc_prv].map(utc =>
+          utc < 10 ? `0${utc}` : utc,
+        );
+
+        ['28', '21', '14', '07', '03'].forEach(m => {
+          document[`m${m}_prv`].src = `${URL}${prv}UT-${m}MHz.gif`;
+          document[`m${m}_now`].src = `${URL}${now}UT-${m}MHz.gif`;
+          document[`m${m}_nxt`].src = `${URL}${nxt}UT-${m}MHz.gif`;
+        });
+
+        ['now1-1', 'now-1'].forEach(id =>
+          SetText(document.getElementById(id), `${prv} UTC`),
+        );
+        ['now1', 'now'].forEach(id =>
+          SetText(document.getElementById(id), `${now} UTC`),
+        );
+        ['now1+1', 'now+1'].forEach(id =>
+          SetText(document.getElementById(id), `${nxt} UTC`),
+        );
+      }
+
+      function Clk(Obj) {
+        if (UTC) UTC.className = 'numbers';
+        Obj.className = 'sel';
+        UTC = Obj;
+        ShowMap();
+      }
+
+      function getVOACAPHour() {
+        const date = new Date();
+        const hours = date.getUTCHours();
+        const minutes = date.getUTCMinutes();
+        return minutes > 30 ? (hours + 1) % 24 : hours;
+      }
+
+      function Init() {
+        const hoursTable = document.getElementById('hours');
+        hoursTable.innerHTML = Array.from(
+          { length: 3 },
+          (_, i) =>
+            `<tr class="numbers">${Array.from(
+              { length: 8 },
+              (_, j) =>
+                `<td id="H${
+                  i * 8 + j
+                }" onmouseover="Over(this)" onmouseout="Out(this)" onclick="Clk(this)">${(
+                  i * 8 +
+                  j
+                )
+                  .toString()
+                  .padStart(2, '0')}</td>`,
+            ).join('')}</tr>`,
+        ).join('');
+        const HourID = `H${getVOACAPHour()}`;
+        SetText(document.getElementById('headerText'), header);
+        SetText(document.getElementById('dateSSN'), dateSSN);
+        UTC = document.getElementById(HourID);
+        Clk(UTC);
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        Init();
+      });
+    </script>
+  </head>
+  <body>
+    <table class="center">
+      <tr>
+        <td align="center" valign="top">
+          <br />
+          <div class="navy">
+            <h1 id="headerText"></h1>
+            <p id="dateSSN"></p>
+            <h1>Propagation Forecast</h1>
+          </div>
+
+          <table class="tbl main-tbl">
+            <tr class="hdr2">
+              <th>MHz</th>
+              <th id="now1-1"></th>
+              <th id="now1"></th>
+              <th id="now1+1"></th>
+              <th>MHz</th>
+            </tr>
+
+            <tr>
+              <th>28</th>
+              <td><img name="m28_prv" /></td>
+              <td><img name="m28_now" /></td>
+              <td><img name="m28_nxt" /></td>
+              <th>28</th>
+            </tr>
+
+            <tr>
+              <th>21</th>
+              <td><img name="m21_prv" /></td>
+              <td><img name="m21_now" /></td>
+              <td><img name="m21_nxt" /></td>
+              <th>21</th>
+            </tr>
+
+            <tr>
+              <th>14</th>
+              <td><img name="m14_prv" /></td>
+              <td><img name="m14_now" /></td>
+              <td><img name="m14_nxt" /></td>
+              <th>14</th>
+            </tr>
+
+            <tr>
+              <th>7</th>
+              <td><img name="m07_prv" /></td>
+              <td><img name="m07_now" /></td>
+              <td><img name="m07_nxt" /></td>
+              <th>7</th>
+            </tr>
+
+            <tr>
+              <th>3.5</th>
+              <td><img name="m03_prv" /></td>
+              <td><img name="m03_now" /></td>
+              <td><img name="m03_nxt" /></td>
+              <th>3.5</th>
+            </tr>
+
+            <tr class="hdr2">
+              <th>MHz</th>
+              <th id="now-1"></th>
+              <th id="now"></th>
+              <th id="now+1"></th>
+              <th>MHz</th>
+            </tr>
+          </table>
+
+          <table class="tbl dotted">
+            <tr class="hdr">
+              <td
+                id="Inc"
+                onmouseover="Over(this)"
+                onmouseout="Out(this)"
+                onclick="Inc('h')"
+              >
+                &laquo;
+              </td>
+              <td colspan="6">UTC</td>
+              <td
+                id="Inc"
+                onmouseover="Over(this)"
+                onmouseout="Out(this)"
+                onclick="Inc('H')"
+              >
+                &raquo;
+              </td>
+            </tr>
+            <tbody id="hours"></tbody>
+          </table>
+
+          <p class="small-text">
+            Propagation maps created with
+            <a href="https://www.dxatlas.com/HamCap/" target="_blank">HamCAP</a>
+          </p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
