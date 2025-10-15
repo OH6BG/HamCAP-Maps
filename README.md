@@ -5,7 +5,7 @@ This is a lightweight client-side viewer for propagation prediction coverage map
 The use of VOACAP hours is enforced; in other words, an hour spans from xx:30 to yy:30. For example, 07 UTC spans from 06:30 UTC to 07:30 UTC.
 
 ## Files
-- `hamcap.html` — main single-file application (HTML/CSS/JS).
+- `index.html` — main single-file application (HTML/CSS/JS).
 - `hamcap-sw.js` (optional) — service worker (registered if present).
 
 ## Features (user-facing)
@@ -36,8 +36,8 @@ The use of VOACAP hours is enforced; in other words, an hour spans from xx:30 to
   - The magnified tab uses the image filename (without extension) as the page title.
 
 ## How to run / test locally
-1. In `hamcap.html`, set up the URL to the map directory.
-2. Open `hamcap.html` in any modern browser.
+1. In `index.html`, set up the URL to the map directory.
+2. Open `index.html` in any modern browser.
 
 Notes:
 - Service worker registration requires HTTPS or `localhost`.
