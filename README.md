@@ -22,7 +22,7 @@ The use of VOACAP hours is enforced; in other words, an hour spans from xx:30 to
 
 ## Developer / Configuration notes
 - Image URL prefix:
-  - Configured via `const URL = 'https://<url to image directory>/';` in `hamcap.html`.
+  - Configured via `const URL = 'https://<url to image directory>/';` in `index.html`.
   - Image template: `${URL}__TIME__UT-${bandId}MHz.gif`. `__TIME__` is replaced with `HH` strings (e.g. `00`, `13`).
 - Bands list:
   - Edit the `bands` array in the script to change which frequency panels are shown.
