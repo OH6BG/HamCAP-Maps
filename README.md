@@ -4,6 +4,8 @@ This is a lightweight client-side viewer for propagation prediction coverage map
 
 The use of VOACAP hours is enforced; in other words, an hour spans from xx:30 to yy:30. For example, 07 UTC spans from 06:30 UTC to 07:30 UTC.
 
+![UI](hamcap-maps.jpg "UI")
+
 ## Files
 - `index.html` — main single-file application (HTML/CSS/JS).
 - `hamcap-sw.js` (optional) — service worker (registered if present).
