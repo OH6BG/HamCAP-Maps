@@ -4,7 +4,14 @@ This is a lightweight client-side viewer for propagation prediction coverage map
 
 The use of VOACAP hours is enforced; in other words, an hour spans from xx:30 to yy:30. For example, 07 UTC spans from 06:30 UTC to 07:30 UTC.
 
-![UI](hamcap-maps.jpg "UI")
+![HamCAP Maps User Interface](hamcap-maps.jpg "HamCAP Maps User Interface")
+
+## How to create coverage maps with HamCAP
+
+Read the following instructions:
+- [HamCAP User's Guide](https://www.voacap.com/2023/documents/hamcap-guide.html). The HamCAP software by Alex VE3NEA is a compact freeware interface program to VOACAP, incorporating both graphical Point-to-Point and Area Coverage predictions.
+- [Boosting HamCAP Performance: A Step-by-Step Guide](https://www.voacap.com/2023/documents/hamcap-boost.html). This guide outlines the steps to enhance radio propagation predictions in HamCAP by adjusting the following settings: the Noise at Receiver, Minimum Take-off Angle and, optionally, Required SNR.
+- [HamCAP Type 13 & 14 Antenna Guide](https://www.voacap.com/2023/documents/hamcap-type1314.html). HamCAP is designed to work with antenna model types 13 and 14 that are just tabulated antenna patterns, 2-D and 1-D respectively, vs. frequency. The program may work with other file types as well, but you will not be able to view the antenna patterns. Learn how to create your own antennas of types 13 and 14. 
 
 ## Files
 - `index.html` — main single-file application (HTML/CSS/JS).
