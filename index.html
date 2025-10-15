@@ -1,305 +1,865 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>HamCAP Propagation Maps</title>
-    <style type="text/css">
-      body {
-        font: 10px Tahoma, Verdana, sans-serif;
-      }
-      img {
-        border: none;
-        width: 360px;
-        height: 180px;
-      }
-      table.center {
-        margin-left: auto;
-        margin-right: auto;
-        width: 50%;
-        border: hidden;
-        border-collapse: collapse;
-        background-color: #eff7ff;
-      }
-      .main-tbl {
-        background-color: #adbad6;
-      }
-      .main-tbl td,
-      th {
-        border: 0.5px solid;
-        padding: 0px;
-      }
-      .navy {
-        color: navy;
-      }
-      .navy p {
-        font-size: 1.5em;
-      }
-      .small-text {
-        font-size: 1.2em;
-      }
-      .tbl {
-        font: 11px Tahoma, Verdana, sans-serif;
-        text-align: center;
-        border-collapse: collapse;
-      }
-      .tbl .hdr2 {
-        font: 12px;
-        font-weight: bold;
-        color: black;
-        background-color: #adbad6;
-      }
-      .tbl .hdr {
-        font-weight: bold;
-        color: black;
-        background-color: #7b8eb5;
-      }
-      .tbl .hdr .undermouse {
-        color: white;
-        background-color: #008;
-        cursor: pointer;
-      }
-      .tbl .numbers {
-        background-color: #adbad6;
-        cursor: pointer;
-      }
-      .tbl .numbers td {
-        width: 22px;
-      }
-      .tbl .numbers .sel {
-        font-weight: bold;
-        background-color: #7b8eb5;
-      }
-      .tbl .numbers .undermouse {
-        color: white;
-        background-color: #008;
-      }
-      .dotted td {
-        border: 0.5px dotted;
-        border-collapse: collapse;
-      }
 
-      td,
-      th {
-        padding: 4px;
-      }
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <link rel="preconnect" href="" crossorigin> <!-- Preconnect to site -->
+    <title>VOACAP DX Charts: HamCAP Maps</title>
+    <style type="text/css">
+        :root {
+            --bg: #071026;
+            --panel: rgba(255, 255, 255, 0.03);
+            --card: #0b1220;
+            --muted: #9fb0c8;
+            --accent: #39b6ff;
+            --accent-2: #7dd3a6;
+            --glass: rgba(255, 255, 255, 0.02);
+            --text: #e6f0fb;
+            --gap: 10px;
+            --pad: 12px;
+            --radius: 12px;
+            --shadow: 0 12px 30px rgba(2, 6, 18, .6);
+            --focus: 0 0 0 3px rgba(57, 182, 255, 0.16);
+            --transition-fast: 180ms ease;
+        }
+
+        /* Light theme overrides */
+        :root[data-theme="light"] {
+            --bg: #f6f9fc;
+            --panel: rgba(2, 6, 23, 0.03);
+            --card: #ffffff;
+            --muted: #506976;
+            --accent: #0078d4;
+            --accent-2: #16a34a;
+            --glass: rgba(2, 6, 23, 0.02);
+            --text: #05202b;
+            --shadow: 0 8px 20px rgba(4, 10, 18, 0.06);
+            --focus: 0 0 0 3px rgba(0, 120, 212, 0.12);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;
+            background: linear-gradient(180deg, #041022 0%, #071026 50%, #07172a 100%);
+            color: var(--text);
+            padding: 28px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            transition: background var(--transition-fast), color var(--transition-fast);
+        }
+
+        /* LIGHT THEME: use a single light color (no gradient) for page background */
+        :root[data-theme="light"] body {
+            background: var(--bg);
+        }
+
+        /* LIGHT THEME: maps panel should be a flat light card (no gradient) */
+        :root[data-theme="light"] .maps {
+            background: var(--card);
+        }
+
+        .shell {
+            width: min(1200px, 98%);
+            display: grid;
+            gap: var(--gap);
+            grid-template-columns: 1fr 340px;
+            align-items: start;
+            transition: all var(--transition-fast)
+        }
+
+        header {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            grid-column: 1/-1
+        }
+
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #8be7ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #022032;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: var(--shadow)
+        }
+
+        .title h1 {
+            margin: 0;
+            font-size: 1.15rem;
+            transition: color var(--transition-fast)
+        }
+
+        .title p {
+            margin: 0;
+            color: var(--muted);
+            font-size: .9rem;
+            transition: color var(--transition-fast)
+        }
+
+        .maps {
+            background: linear-gradient(180deg, var(--card), rgba(8, 12, 20, 0.6));
+            padding: calc(var(--pad) + 6px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background var(--transition-fast), box-shadow var(--transition-fast), border var(--transition-fast);
+        }
+
+        /* FRAME: top times, map grid, bottom times share identical column layout */
+        .maps-frame {
+            display: grid;
+            grid-template-columns: 64px repeat(3, 1fr) 64px;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .times-row {
+            display: contents;
+        }
+
+        .time-cell {
+            text-align: center;
+            padding: 6px 8px;
+            color: var(--muted);
+            font-weight: 600;
+            background: transparent;
+            border-radius: 8px;
+            transition: color var(--transition-fast), background var(--transition-fast)
+        }
+
+        .time-cell.center {
+            color: var(--text);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .maps-grid {
+            display: contents;
+        }
+
+        .band {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border-radius: 10px;
+            color: var(--text);
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            transition: background var(--transition-fast), color var(--transition-fast)
+        }
+
+        .map-slot {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.012), rgba(255, 255, 255, 0.01));
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 16 / 9;
+            min-height: 88px;
+            position: relative;
+            transition: transform .18s ease, box-shadow .18s ease;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.015));
+            /* make focus outline visible for keyboard users */
+            outline: none;
+        }
+
+        /* hover highlight - indicate clickable */
+        .map-slot:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 22px 50px rgba(2, 6, 18, .7);
+            cursor: pointer;
+        }
+
+        .map-slot.loading {
+            background-size: 200% 100%;
+            animation: shimmer 1.2s linear infinite;
+        }
+
+        @keyframes shimmer {
+            from {
+                background-position: 200% 0
+            }
+
+            to {
+                background-position: -200% 0
+            }
+        }
+
+        img.map {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: contrast(1.03) saturate(1.02);
+            opacity: 0;
+            transition: opacity .26s ease;
+        }
+
+        img.map[src] {
+            opacity: 1;
+        }
+
+        .meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: transparent;
+            color: var(--muted);
+            font-size: .9rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: color var(--transition-fast), border var(--transition-fast)
+        }
+
+        .controls {
+            position: sticky;
+            top: 28px;
+            align-self: start;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 260px;
+        }
+
+        .panel {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.005));
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.03)
+        }
+
+        .hour-strip {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .hour-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--muted);
+            padding: 8px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all .15s ease;
+            min-width: 56px;
+            text-align: center;
+        }
+
+        .hour-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(2, 6, 18, 0.35)
+        }
+
+        .hour-btn.sel {
+            background: linear-gradient(90deg, var(--accent), #8be7ff);
+            color: #022032;
+            border-color: transparent;
+            box-shadow: 0 12px 30px rgba(57, 182, 255, 0.14)
+        }
+
+        .hour-btn:focus {
+            outline: none;
+            box-shadow: var(--focus)
+        }
+
+        .direction {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .btn {
+            padding: 10px 12px;
+            background: transparent;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn:focus {
+            box-shadow: var(--focus)
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0
+        }
+
+        /* theme toggle button */
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 10px;
+            padding: 8px 10px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: transparent;
+            color: var(--muted);
+            font-weight: 600;
+            transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        :root[data-theme="light"] .theme-toggle {
+            border-color: rgba(2, 6, 23, 0.06);
+            color: var(--muted)
+        }
+
+        .theme-toggle .label {
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        @media (min-width:520px) {
+            .theme-toggle .label {
+                display: inline-block
+            }
+        }
+
+        @media (max-width:980px) {
+            .shell {
+                grid-template-columns: 1fr
+            }
+
+            .controls {
+                position: relative;
+                top: 0
+            }
+
+            .maps-frame {
+                grid-template-columns: 56px repeat(3, 1fr) 56px
+            }
+        }
+
+        @media (max-width:640px) {
+            .maps-frame {
+                grid-template-columns: 1fr
+            }
+
+            .band {
+                display: none
+            }
+
+            .map-slot {
+                min-height: 140px
+            }
+
+            .meta {
+                flex-direction: column;
+                align-items: flex-start
+            }
+
+            .hour-strip {
+                justify-content: flex-start;
+                overflow: auto
+            }
+        }
+
+        /* small hint text under controls */
+        .map-hint {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-align: center;
+        }
     </style>
+</head>
+
+<body>
+    <div class="shell" role="application" aria-label="HamCAP propagation viewer">
+        <header>
+            <div class="brand">
+                <div class="logo" aria-hidden="true">DX</div>
+                <div class="title">
+                    <h1 id="headerText">DX CALL, MONTH YEAR</h1><!-- DX pedition name and date -->
+                    <p id="subHeader" style="color:var(--muted)">Interactive coverage maps</p>
+                </div>
+            </div>
+
+            <div class="meta" aria-hidden="false">
+                <div class="badge" id="dateSSN">SSN: 80</div> <!-- SSN used for calculations -->
+                <div class="badge">— VOACAP DX Charts by OH6BG</div>
+
+                <button id="themeToggle" class="theme-toggle" aria-pressed="false" title="Toggle theme">
+                    <span id="themeIcon">🌙</span>
+                    <span class="label" id="themeLabel">Dark</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="maps" id="mapsMain" aria-live="polite">
+            <div class="maps-frame" aria-hidden="false">
+                <!-- TOP TIMES row: blank, PREV, NOW (middle), NEXT, blank -->
+                <div class="time-cell" aria-hidden="true"></div>
+                <div id="timeTopPrev" class="time-cell center">--:-- UTC</div>
+                <div id="timeTopNow" class="time-cell center">--:-- UTC</div>
+                <div id="timeTopNext" class="time-cell center">--:-- UTC</div>
+                <div class="time-cell" aria-hidden="true"></div>
+
+                <!-- MAPS grid (fills same columns) -->
+                <div class="maps-grid" id="mapsGrid" role="grid" aria-label="coverage maps">
+                </div>
+
+                <!-- BOTTOM TIMES row: blank, PREV, NOW, NEXT, blank -->
+                <div class="time-cell" aria-hidden="true"></div>
+                <div id="timeBotPrev" class="time-cell">--:-- UTC</div>
+                <div id="timeBotNow" class="time-cell">--:-- UTC</div>
+                <div id="timeBotNext" class="time-cell">--:-- UTC</div>
+                <div class="time-cell" aria-hidden="true"></div>
+            </div>
+        </main>
+
+        <aside class="controls" aria-label="controls">
+            <div class="panel" role="region" aria-label="Time controls">
+                <div class="direction">
+                    <button id="prevBtn" class="btn" aria-label="Previous hour">‹ Prev</button>
+                    <div style="text-align:center">
+                        <div id="nowLabel" style="font-weight:700">00 UTC</div>
+                        <div id="nowSub" style="font-size:.85rem;color:var(--muted)">current</div>
+                    </div>
+                    <button id="nextBtn" class="btn" aria-label="Next hour">Next ›</button>
+                </div>
+
+                <div class="hour-strip" id="hourStrip" role="list" aria-label="UTC hours"></div>
+                <div class="map-hint" id="mapHint">
+                    Tip: Hover a map to highlight it — click the highlighted map to open it in a new tab.
+                </div>
+                <div class="sr-only" id="liveAnnounce" aria-live="polite"></div>
+            </div>
+        </aside>
+    </div>
 
     <script>
-      /*
-      The original JavaScript and CSS style by Alex VE3NEA, modified & expanded by SM5AJV Ingo. Vy TNX for your efforts!
-      Major code refactoring by Jari OH6BG.
-      */
-      let UTC;
-      const URL = ''; // URL to the map folder. Leave empty if this file is in the same folder with the HamCAP maps
-      const header = ''; // enter '<CALLSIGN>, <LATITUDE> <LONGITUDE>' e.g. '4U1UN, 41N 74W'
-      const dateSSN = ''; // enter '<MONTH> <YEAR>, SSN <nnn>' e.g. 'August 2023, SSN 131'
+        'use strict';
+        /* theme toggle logic */
+        (function () {
+            const KEY = 'hc-theme';
+            const root = document.documentElement;
+            const toggle = document.getElementById('themeToggle');
+            const icon = document.getElementById('themeIcon');
+            const label = document.getElementById('themeLabel');
+            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
 
-      function Inc(Oper) {
-        let S = UTC.id.substr(1, 2);
-        let H = document.getElementById(
-          `H${(Oper === 'H' ? ++S : --S + 24) % 24}`,
-        );
-        Clk(H);
-      }
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    root.setAttribute('data-theme', 'light');
+                    toggle.setAttribute('aria-pressed', 'true');
+                    icon.textContent = '☀️';
+                    label.textContent = 'Light';
+                } else {
+                    root.removeAttribute('data-theme');
+                    toggle.setAttribute('aria-pressed', 'false');
+                    icon.textContent = '🌙';
+                    label.textContent = 'Dark';
+                }
+            }
 
-      function Over(Obj) {
-        Obj.className = 'undermouse';
-      }
+            function getStoredTheme() {
+                return localStorage.getItem(KEY);
+            }
 
-      function Out(Obj) {
-        Obj.className =
-          Obj.id === 'Inc' ? 'hdr' : Obj === UTC ? 'sel' : 'numbers';
-      }
+            function detectTheme() {
+                const stored = getStoredTheme();
+                if (stored === 'light' || stored === 'dark') return stored;
+                if (prefersLight && prefersLight.matches) return 'light';
+                return 'dark';
+            }
 
-      function GetText(Obj) {
-        return Obj[
-          document.getElementsByTagName('body')[0].innerText !== undefined
-            ? 'innerText'
-            : 'textContent'
+            applyTheme(detectTheme());
+
+            toggle.addEventListener('click', () => {
+                const current = (root.getAttribute('data-theme') === 'light') ? 'light' : 'dark';
+                const next = current === 'light' ? 'dark' : 'light';
+                localStorage.setItem(KEY, next);
+                applyTheme(next);
+            });
+
+            if (prefersLight && prefersLight.addEventListener) {
+                prefersLight.addEventListener('change', (e) => {
+                    if (!getStoredTheme()) {
+                        applyTheme(e.matches ? 'light' : 'dark');
+                    }
+                });
+            }
+        })();
+    </script>
+
+    <script>
+        'use strict';
+        const URL = ''; // URL prefix for the map directory
+        const bands = [
+            { label: '28 MHz', id: '28' }, { label: '24 MHz', id: '24' },
+            { label: '21 MHz', id: '21' }, { label: '18 MHz', id: '18' },
+            { label: '14 MHz', id: '14' }, { label: '10 MHz', id: '10' },
+            { label: '7 MHz', id: '07' }, { label: '3.5 MHz', id: '03' }
         ];
-      }
 
-      function SetText(Obj, text) {
-        Obj[
-          document.getElementsByTagName('body')[0].innerText !== undefined
-            ? 'innerText'
-            : 'textContent'
-        ] = text;
-      }
+        const mapsGrid = document.getElementById('mapsGrid');
+        const hourStrip = document.getElementById('hourStrip');
+        const live = document.getElementById('liveAnnounce');
+        let selectedHour = null;
+        let lastTimes = { prev: null, now: null, next: null };
 
-      function ShowMap() {
-        if (!UTC) return;
-        const utc_now = parseInt(GetText(UTC), 10);
-        const utc_nxt = (utc_now + 1) % 24;
-        const utc_prv = (utc_now + 23) % 24;
-        const [now, nxt, prv] = [utc_now, utc_nxt, utc_prv].map(utc =>
-          utc < 10 ? `0${utc}` : utc,
-        );
+        /* --- in-memory LRU image cache --- */
+        const IMG_CACHE = new Map(); // key -> {img, promise, ts}
+        const CACHE_LIMIT = 48;
+        const CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes
 
-        ['28', '21', '14', '07', '03'].forEach(m => {
-          document[`m${m}_prv`].src = `${URL}${prv}UT-${m}MHz.gif`;
-          document[`m${m}_now`].src = `${URL}${now}UT-${m}MHz.gif`;
-          document[`m${m}_nxt`].src = `${URL}${nxt}UT-${m}MHz.gif`;
+        function _pruneCache() {
+            const now = Date.now();
+            for (const [k, v] of IMG_CACHE.entries()) {
+                if (now - v.ts > CACHE_TTL_MS) IMG_CACHE.delete(k);
+            }
+            while (IMG_CACHE.size > CACHE_LIMIT) {
+                const firstKey = IMG_CACHE.keys().next().value;
+                IMG_CACHE.delete(firstKey);
+            }
+        }
+
+        function cacheImage(src) {
+            _pruneCache();
+            if (IMG_CACHE.has(src)) {
+                const entry = IMG_CACHE.get(src);
+                IMG_CACHE.delete(src);
+                entry.ts = Date.now();
+                IMG_CACHE.set(src, entry);
+                return entry.promise;
+            }
+            let resolveFn, rejectFn;
+            const p = new Promise((res, rej) => { resolveFn = res; rejectFn = rej; });
+            const img = new Image();
+            img.decoding = 'async';
+            img.onload = () => { resolveFn(img); };
+            img.onerror = (e) => { rejectFn(e); };
+            img.src = src;
+            IMG_CACHE.set(src, { img, promise: p, ts: Date.now() });
+            _pruneCache();
+            return p;
+        }
+
+        /* --- visibility observer: lazy-load when slot becomes (near) visible --- */
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(ent => {
+                const slot = ent.target;
+                if (ent.isIntersecting) {
+                    slot.dataset.visible = '1';
+                    if (lastTimes.now) {
+                        ensureSlotImageForCurrentTimes(slot);
+                    }
+                } else {
+                    delete slot.dataset.visible;
+                }
+            });
+        }, { root: null, rootMargin: '360px', threshold: 0.02 });
+
+        function ensureSlotImageForCurrentTimes(slot) {
+            if (!lastTimes.now) return;
+            const img = slot.querySelector('img.map');
+            const time = slot.dataset.slot === 'prv' ? lastTimes.prev : slot.dataset.slot === 'now' ? lastTimes.now : lastTimes.next;
+            const src = img.dataset.srcTemplate.replace('__TIME__', time);
+            if (img.getAttribute('src') === src) return;
+            if (!slot.classList.contains('loading')) slot.classList.add('loading');
+            cacheImage(src).then(cachedImg => {
+                if (img.dataset.srcTemplate.replace('__TIME__', time) === src) {
+                    if (img.src !== cachedImg.src) img.src = cachedImg.src;
+                }
+            }).catch(() => {
+                // leave an accessible error state, clear loading after brief delay
+                setTimeout(() => slot.classList.remove('loading'), 400);
+            });
+        }
+
+        /* Open a small HTML wrapper in a new tab and scale the image 2x.
+           Falls back to opening the raw image if popup blocked. */
+        function openMagnified(href) {
+            // open a blank tab (avoid passing 'noopener' in the features string)
+            const w = window.open('', '_blank');
+            if (!w) {
+                // popup blocked — open the image directly
+                window.open(href, '_blank');
+                return;
+            }
+
+            // derive a human-friendly name from the URL (last path segment, without query)
+            let name = 'map';
+            try {
+                const urlNoQ = href.split('?')[0];
+                name = decodeURIComponent(urlNoQ.split('/').pop() || 'map');
+                name = name.replace(/\.[^/.]+$/, '');
+            } catch (e) { /* keep fallback */ }
+
+            const safeHref = href.replace(/"/g, '&quot;');
+            const safeName = String(name).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${safeName} — magnified</title>
+<style>
+  html,body{height:100%;margin:0;background:#000;color:#fff;overflow:auto}
+  .wrap{padding:12px;display:block}
+  h1{font-size:1rem;margin:0 0 12px;color:#ddd;font-family:system-ui,Segoe UI,Roboto,Arial}
+  img{display:block;transform:scale(2);transform-origin:0 0;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+      max-width:none}
+</style>
+</head>
+<body>
+  <div class="wrap"><h1>${safeName}</h1><img src="${safeHref}" alt="${safeName} — magnified"></div>
+</body>
+</html>`;
+
+            try {
+                w.document.open();
+                w.document.write(html);
+                w.document.close();
+                // optional: remove opener reference where supported
+                try { w.opener = null; } catch (e) { /* ignore */ }
+                w.focus();
+            } catch (e) {
+                // writing failed (rare) — fall back to opening the image directly
+                window.open(href, '_blank');
+            }
+        }
+
+        function buildGrid() {
+            io.disconnect();
+            mapsGrid.innerHTML = '';
+            bands.forEach(b => {
+                const lblL = document.createElement('div');
+                lblL.className = 'band'; lblL.textContent = b.label; mapsGrid.appendChild(lblL);
+
+                ['prv', 'now', 'nxt'].forEach(slot => {
+                    const cell = document.createElement('div');
+                    cell.className = 'map-slot loading';
+                    cell.dataset.band = b.id;
+                    cell.dataset.slot = slot;
+
+                    // make slots keyboard-focusable and expose as link for assistive tech
+                    cell.tabIndex = 0;
+                    cell.setAttribute('role', 'link');
+                    cell.setAttribute('aria-label', `${b.label} map`);
+
+                    const img = document.createElement('img');
+                    img.className = 'map';
+                    img.alt = `${b.label} ${slot}`;
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    // hint dimensions (adjust if you know actual image size)
+                    img.width = 640;
+                    img.height = 360;
+                    img.dataset.srcTemplate = `${URL}__TIME__UT-${b.id}MHz.gif`;
+
+                    img.addEventListener('load', () => {
+                        if (cell.classList.contains('loading')) cell.classList.remove('loading');
+                        if (lastTimes.now) {
+                            const time = slot === 'prv' ? lastTimes.prev : slot === 'now' ? lastTimes.now : lastTimes.next;
+                            img.alt = `${b.label} ${time} UTC`;
+                            // update accessible label with time
+                            cell.setAttribute('aria-label', `${b.label} ${time} UTC map`);
+                        }
+                    });
+
+                    img.addEventListener('error', () => {
+                        // simple neutral SVG fallback so the layout remains intact and accessible
+                        img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect width="100%" height="100%" fill="%23e6e9ec"/></svg>';
+                        img.alt = `${b.label} — image unavailable`;
+                        cell.classList.remove('loading');
+                        cell.classList.add('errored');
+                    });
+
+                    // click to open hi-res map in a new tab, but only when user clicked the highlighted (hovered) item
+                    cell.addEventListener('click', (ev) => {
+                        // require slot to be hovered (matches(':hover')) to avoid accidental opens
+                        if (!cell.matches(':hover')) return;
+                        if (!lastTimes.now) return;
+                        const time = cell.dataset.slot === 'prv' ? lastTimes.prev : cell.dataset.slot === 'now' ? lastTimes.now : lastTimes.next;
+                        const href = img.dataset.srcTemplate.replace('__TIME__', time);
+                        // open in new tab safely
+                        // window.open(href, '_blank', 'noopener');
+                        openMagnified(href);
+                    });
+
+                    // keyboard support: Enter or Space opens the image (regardless of hover)
+                    cell.addEventListener('keydown', (ev) => {
+                        if (ev.key === 'Enter' || ev.key === ' ') {
+                            ev.preventDefault();
+                            if (!lastTimes.now) return;
+                            const time = cell.dataset.slot === 'prv' ? lastTimes.prev : cell.dataset.slot === 'now' ? lastTimes.now : lastTimes.next;
+                            const href = img.dataset.srcTemplate.replace('__TIME__', time);
+                            // window.open(href, '_blank', 'noopener');
+                            openMagnified(href);
+                        }
+                    });
+
+                    cell.appendChild(img);
+                    mapsGrid.appendChild(cell);
+                    io.observe(cell);
+                });
+
+                const lblR = document.createElement('div');
+                lblR.className = 'band'; lblR.textContent = b.label; mapsGrid.appendChild(lblR);
+            });
+        }
+
+        function buildHours() {
+            hourStrip.innerHTML = '';
+            for (let i = 0; i < 24; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'hour-btn';
+                btn.type = 'button';
+                btn.dataset.hour = i;
+                btn.textContent = pad2(i) + ' UTC';
+                btn.setAttribute('role', 'listitem');
+                btn.setAttribute('aria-pressed', 'false');
+                btn.addEventListener('click', () => selectHour(i, btn));
+                btn.addEventListener('keydown', (ev) => {
+                    if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectHour(i, btn); }
+                    if (ev.key === 'Home') { ev.preventDefault(); selectHour(0); }
+                    if (ev.key === 'End') { ev.preventDefault(); selectHour(23); }
+                });
+                hourStrip.appendChild(btn);
+            }
+        }
+
+        function pad2(n) { return (n < 10 ? '0' : '') + n; }
+        function getVOACAPHour() { const d = new Date(); const h = d.getUTCHours(), m = d.getUTCMinutes(); return (m > 30) ? (h + 1) % 24 : h; }
+
+        function setTopBottomTimes(prev, now, next) {
+            document.getElementById('timeTopPrev').textContent = prev + ' UTC';
+            document.getElementById('timeTopNow').textContent = now + ' UTC';
+            document.getElementById('timeTopNext').textContent = next + ' UTC';
+            document.getElementById('timeBotPrev').textContent = prev + ' UTC';
+            document.getElementById('timeBotNow').textContent = now + ' UTC';
+            document.getElementById('timeBotNext').textContent = next + ' UTC';
+        }
+
+        function selectHour(hour, btnNode) {
+            const btn = btnNode || [...hourStrip.children].find(n => Number(n.dataset.hour) === hour);
+            if (!btn) return;
+            if (selectedHour && selectedHour.el) {
+                selectedHour.el.classList.remove('sel');
+                selectedHour.el.setAttribute('aria-pressed', 'false');
+            }
+            btn.classList.add('sel');
+            btn.setAttribute('aria-pressed', 'true');
+            selectedHour = { hour, el: btn };
+            document.getElementById('nowLabel').textContent = pad2(hour) + ' UTC';
+            document.getElementById('nowSub').textContent = 'selected';
+            live.textContent = `Hour ${pad2(hour)} UTC selected`;
+
+            const now = pad2(hour), prev = pad2((hour + 23) % 24), next = pad2((hour + 1) % 24);
+            lastTimes = { prev, now, next };
+            setTopBottomTimes(prev, now, next);
+
+            const visibleSlots = mapsGrid.querySelectorAll('.map-slot[data-visible="1"]');
+            visibleSlots.forEach(slot => ensureSlotImageForCurrentTimes(slot));
+
+            const visibleBands = new Set();
+            visibleSlots.forEach(s => visibleBands.add(s.dataset.band));
+            visibleBands.forEach(bid => {
+                ['prv', 'now', 'nxt'].forEach(slotKey => {
+                    const time = slotKey === 'prv' ? prev : slotKey === 'now' ? now : next;
+                    const src = `${URL}${time}UT-${bid}MHz.gif`;
+                    cacheImage(src).catch(() => { /* ignore */ });
+                });
+            });
+
+            btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+
+        // prev/next controls & keyboard navigation
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            const h = selectedHour ? selectedHour.hour : getVOACAPHour();
+            const newH = (h + 23) % 24;
+            const btn = [...hourStrip.children].find(n => Number(n.dataset.hour) === newH);
+            selectHour(newH, btn);
+        });
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            const h = selectedHour ? selectedHour.hour : getVOACAPHour();
+            const newH = (h + 1) % 24;
+            const btn = [...hourStrip.children].find(n => Number(n.dataset.hour) === newH);
+            selectHour(newH, btn);
         });
 
-        ['now1-1', 'now-1'].forEach(id =>
-          SetText(document.getElementById(id), `${prv} UTC`),
-        );
-        ['now1', 'now'].forEach(id =>
-          SetText(document.getElementById(id), `${now} UTC`),
-        );
-        ['now1+1', 'now+1'].forEach(id =>
-          SetText(document.getElementById(id), `${nxt} UTC`),
-        );
-      }
+        document.addEventListener('keydown', (ev) => {
+            if (!selectedHour) return;
+            if (ev.key === 'ArrowLeft') { ev.preventDefault(); const n = (selectedHour.hour + 23) % 24; selectHour(n); }
+            if (ev.key === 'ArrowRight') { ev.preventDefault(); const n = (selectedHour.hour + 1) % 24; selectHour(n); }
+        });
 
-      function Clk(Obj) {
-        if (UTC) UTC.className = 'numbers';
-        Obj.className = 'sel';
-        UTC = Obj;
-        ShowMap();
-      }
-
-      function getVOACAPHour() {
-        const date = new Date();
-        const hours = date.getUTCHours();
-        const minutes = date.getUTCMinutes();
-        return minutes > 30 ? (hours + 1) % 24 : hours;
-      }
-
-      function Init() {
-        const hoursTable = document.getElementById('hours');
-        hoursTable.innerHTML = Array.from(
-          { length: 3 },
-          (_, i) =>
-            `<tr class="numbers">${Array.from(
-              { length: 8 },
-              (_, j) =>
-                `<td id="H${
-                  i * 8 + j
-                }" onmouseover="Over(this)" onmouseout="Out(this)" onclick="Clk(this)">${(
-                  i * 8 +
-                  j
-                )
-                  .toString()
-                  .padStart(2, '0')}</td>`,
-            ).join('')}</tr>`,
-        ).join('');
-        const HourID = `H${getVOACAPHour()}`;
-        SetText(document.getElementById('headerText'), header);
-        SetText(document.getElementById('dateSSN'), dateSSN);
-        UTC = document.getElementById(HourID);
-        Clk(UTC);
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        Init();
-      });
+        // init
+        buildGrid(); buildHours();
+        const initial = getVOACAPHour();
+        const initialBtn = [...hourStrip.children].find(n => Number(n.dataset.hour) === initial);
+        requestAnimationFrame(() => selectHour(initial, initialBtn));
     </script>
-  </head>
-  <body>
-    <table class="center">
-      <tr>
-        <td align="center" valign="top">
-          <br />
-          <div class="navy">
-            <h1 id="headerText"></h1>
-            <p id="dateSSN"></p>
-            <h1>Propagation Forecast</h1>
-          </div>
 
-          <table class="tbl main-tbl">
-            <tr class="hdr2">
-              <th>MHz</th>
-              <th id="now1-1"></th>
-              <th id="now1"></th>
-              <th id="now1+1"></th>
-              <th>MHz</th>
-            </tr>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('hamcap-sw.js').catch(() => { /* ignore registration failures */ });
+        }
+    </script>
+</body>
 
-            <tr>
-              <th>28</th>
-              <td><img name="m28_prv" /></td>
-              <td><img name="m28_now" /></td>
-              <td><img name="m28_nxt" /></td>
-              <th>28</th>
-            </tr>
-
-            <tr>
-              <th>21</th>
-              <td><img name="m21_prv" /></td>
-              <td><img name="m21_now" /></td>
-              <td><img name="m21_nxt" /></td>
-              <th>21</th>
-            </tr>
-
-            <tr>
-              <th>14</th>
-              <td><img name="m14_prv" /></td>
-              <td><img name="m14_now" /></td>
-              <td><img name="m14_nxt" /></td>
-              <th>14</th>
-            </tr>
-
-            <tr>
-              <th>7</th>
-              <td><img name="m07_prv" /></td>
-              <td><img name="m07_now" /></td>
-              <td><img name="m07_nxt" /></td>
-              <th>7</th>
-            </tr>
-
-            <tr>
-              <th>3.5</th>
-              <td><img name="m03_prv" /></td>
-              <td><img name="m03_now" /></td>
-              <td><img name="m03_nxt" /></td>
-              <th>3.5</th>
-            </tr>
-
-            <tr class="hdr2">
-              <th>MHz</th>
-              <th id="now-1"></th>
-              <th id="now"></th>
-              <th id="now+1"></th>
-              <th>MHz</th>
-            </tr>
-          </table>
-
-          <table class="tbl dotted">
-            <tr class="hdr">
-              <td
-                id="Inc"
-                onmouseover="Over(this)"
-                onmouseout="Out(this)"
-                onclick="Inc('h')"
-              >
-                &laquo;
-              </td>
-              <td colspan="6">UTC</td>
-              <td
-                id="Inc"
-                onmouseover="Over(this)"
-                onmouseout="Out(this)"
-                onclick="Inc('H')"
-              >
-                &raquo;
-              </td>
-            </tr>
-            <tbody id="hours"></tbody>
-          </table>
-
-          <p class="small-text">
-            Propagation maps created with
-            <a href="https://www.dxatlas.com/HamCap/" target="_blank">HamCAP</a>
-          </p>
-        </td>
-      </tr>
-    </table>
-  </body>
 </html>
