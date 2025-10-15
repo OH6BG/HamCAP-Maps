@@ -13,7 +13,7 @@ Read the following instructions:
 - [Boosting HamCAP Performance: A Step-by-Step Guide](https://www.voacap.com/2023/documents/hamcap-boost.html). This guide outlines the steps to enhance radio propagation predictions in HamCAP by adjusting the following settings: the Noise at Receiver, Minimum Take-off Angle and, optionally, Required SNR.
 - [HamCAP Type 13 & 14 Antenna Guide](https://www.voacap.com/2023/documents/hamcap-type1314.html). HamCAP is designed to work with antenna model types 13 and 14 that are just tabulated antenna patterns, 2-D and 1-D respectively, vs. frequency. The program may work with other file types as well, but you will not be able to view the antenna patterns. Learn how to create your own antennas of types 13 and 14. 
 
-## Files
+## HamCAP Maps Files
 - `index.html` — main single-file application (HTML/CSS/JS).
 - `hamcap-sw.js` (optional) — service worker (registered if present).
 
